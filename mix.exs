@@ -2,7 +2,7 @@ defmodule BusinessDays.MixProject do
   use Mix.Project
 
   @app :business_days
-  @version "0.1.1"
+  @version "0.1.3"
 
   def project do
     [
