@@ -34,7 +34,7 @@ defmodule BusinessDays.MixProject do
 
   defp docs() do
     [
-      main: "README",
+      main: "readme",
       source_ref: "v#{@version}",
       canonical: "http://hexdocs.pm/#{@app}",
       logo: "public/icon.png",
