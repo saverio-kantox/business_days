@@ -2,7 +2,7 @@ defmodule BusinessDays.MixProject do
   use Mix.Project
 
   @app :business_days
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
@@ -10,9 +10,11 @@ defmodule BusinessDays.MixProject do
       version: @version,
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      name: "#{@app}",
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      name: "#{@app}",
+      description: "Business days intervals calculations",
+      package: package()
     ]
   end
 
@@ -41,6 +43,17 @@ defmodule BusinessDays.MixProject do
         "README.md"
       ],
       groups_for_modules: []
+    ]
+  end
+
+  defp package() do
+    [
+      licenses: ["MIT"],
+      maintainers: ["Saverio Trioni"],
+      links: %{
+        "GitHub" => "https://github.com/saverio-kantox/#{@app}",
+        "Docs" => "https://hexdocs.pm/#{@app}"
+      }
     ]
   end
 end

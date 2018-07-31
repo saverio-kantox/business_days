@@ -21,7 +21,8 @@ defmodule BusinessDays do
   @doc """
   Starts the BusinessDays server.
   """
-  @spec start_link(data :: %{optional(String.t()) => list(%Date{})}) :: {:ok, any}
+  @typep dateable :: %Date{} | String.t() | :calendar.date()
+  @spec start_link(data :: %{optional(String.t()) => list(dateable())}) :: {:ok, any}
   def start_link(data), do: GenServer.start_link(__MODULE__, data, name: __MODULE__)
 
   @doc """
@@ -38,14 +39,14 @@ defmodule BusinessDays do
       iex> BusinessDays.ago(~D[2018-07-04], 0, ~W[USD])
       ~D[2018-07-03]
   """
-  @spec ago(start :: %Date{}, n :: integer(), names :: list(String.t())) :: %Date{}
+  @spec ago(start :: dateable(), n :: integer(), names :: list(String.t())) :: %Date{}
   def ago(start, n, names \\ [])
 
   def ago(start, n, names) when n < 0,
     do: since(start, -n, names)
 
   def ago(start, n, names),
-    do: GenServer.call(__MODULE__, {:days, start, n, names, -1})
+    do: days_p(start, n, names, -1)
 
   @doc """
   Returns a date that is `n` business days after the given date.
@@ -65,7 +66,7 @@ defmodule BusinessDays do
     do: ago(start, -n, names)
 
   def since(start, n, names),
-    do: GenServer.call(__MODULE__, {:days, start, n, names, 1})
+    do: days_p(start, n, names, 1)
 
   @doc """
   Returns a set of the defined holidays for the given calendar(s). One can
@@ -80,6 +81,16 @@ defmodule BusinessDays do
     __MODULE__
     |> GenServer.call({:holidays, names})
     |> Enum.sort()
+  end
+
+  defp days_p(start, n, names, direction) when is_tuple(start),
+    do: days_p(Date.from_erl!(start), n, names, direction)
+
+  defp days_p(start, n, names, direction) when is_binary(start),
+    do: days_p(Date.from_iso8601!(start), n, names, direction)
+
+  defp days_p(start, n, names, direction) do
+    GenServer.call(__MODULE__, {:days, start, n, names, direction})
   end
 
   @impl true
